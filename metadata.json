@@ -1,0 +1,6 @@
+{
+  "name": "Warung Pintar POS",
+  "description": "Aplikasi Point of Sale (POS) ringan untuk pemilik warung dengan manajemen stok otomatis dan laporan real-time.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
