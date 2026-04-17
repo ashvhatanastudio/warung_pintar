@@ -7,14 +7,12 @@ import Cashier from './pages/Cashier';
 import Inventory from './pages/Inventory';
 import Reports from './pages/Reports';
 import { Toaster } from 'sonner';
-import { LayoutDashboard, ShoppingCart, Package } from 'lucide-react';
 
 function AppContent() {
   const { user, profile, loading } = useAuth();
-  
-  // LOGIKA BARU: Jika Login Berhasil (User ada), LANGSUNG masuk ke Dashboard
-  // Tidak peduli Profile sudah ketemu atau belum.
-  
+  const [activeTab, setActiveTab] = useState('dashboard');
+
+  // Loading state
   if (loading && !user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-bg-app">
@@ -23,12 +21,13 @@ function AppContent() {
     );
   }
 
+  // Cek apakah user sudah login
   if (!user) {
     return <Login />;
   }
 
-  // Jika masuk ke sini, berarti User SUDAH ke deteksi Login
-  // Sisanya tinggal render Dashboard...
+  // Fallback jika profil belum ada di database
+  const userRole = profile?.role || 'kasir';
 
   const renderContent = () => {
     switch (activeTab) {
@@ -37,9 +36,9 @@ function AppContent() {
       case 'cashier':
         return <Cashier />;
       case 'inventory':
-        return profile.role === 'admin' ? <Inventory /> : <Dashboard setActiveTab={setActiveTab} />;
+        return userRole === 'admin' ? <Inventory /> : <Dashboard setActiveTab={setActiveTab} />;
       case 'reports':
-        return profile.role === 'admin' ? <Reports /> : <Dashboard setActiveTab={setActiveTab} />;
+        return userRole === 'admin' ? <Reports /> : <Dashboard setActiveTab={setActiveTab} />;
       default:
         return <Dashboard setActiveTab={setActiveTab} />;
     }
