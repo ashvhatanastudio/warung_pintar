@@ -27,7 +27,7 @@ export default function Layout({ children, activeTab, setActiveTab }: LayoutProp
     <div className="flex flex-col min-h-screen bg-bg-app pb-20">
       {/* Header */}
       <header className="bg-white text-slate-900 h-16 border-b border-slate-200 sticky top-0 z-10">
-        <div className="flex justify-between items-center max-w-lg mx-auto h-full px-4">
+        <div className="flex justify-between items-center max-w-7xl mx-auto h-full px-4 sm:px-6">
           <div className="flex items-center gap-3">
             <div className="bg-primary w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold">
               W
@@ -50,12 +50,12 @@ export default function Layout({ children, activeTab, setActiveTab }: LayoutProp
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-lg mx-auto w-full p-4">
+      <main className="flex-1 max-w-7xl mx-auto w-full p-4 sm:p-6 lg:p-8">
         {children}
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around items-center h-16 z-10 max-w-lg mx-auto shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around items-center h-16 z-20 w-full max-w-7xl mx-auto md:left-1/2 md:-translate-x-1/2 md:rounded-t-3xl md:shadow-[0_-8px_30px_rgb(0,0,0,0.04)]">
         {filteredNavItems.map((item) => (
           <button
             key={item.id}
