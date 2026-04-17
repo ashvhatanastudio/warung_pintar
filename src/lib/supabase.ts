@@ -1,24 +1,19 @@
 import { createClient } from '@supabase/supabase-js';
 
-// URL & KEY LANGSUNG DI SINI (HARDCODE)
+// URL ini saya ambil dari screenshot Anda
 const supabaseUrl = "https://ypgmeblktxfuajvnghct.supabase.co"; 
-const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlwZ21lYmxrdHhmdWFqdm5naGN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMjIyMDMsImV4cCI6MjA5MTc5ODIwM30._feGrr4hciBLS2uEIst_eqjHU_sgxBL_uXiOQNtrh7Y"; 
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true
-  }
-});
+// GANTI BAGIAN DI BAWAH INI DENGAN ANON KEY ASLI ANDA
+// (Ambil dari Dashboard Supabase > Settings > API)
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlwZ21lYmxrdHhmdWFqdm5naGN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMjIyMDMsImV4cCI6MjA5MTc5ODIwM30._feGrr4hciBLS2uEIst_eqjHU_sgxBL_uXiOQNtrh7Y";
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export type Profile = {
   id: string;
   role: 'admin' | 'kasir';
   full_name: string;
 };
-
-// ... baris lainnya (Product, Category) biarkan saja
 
 export type Product = {
   id: number;
