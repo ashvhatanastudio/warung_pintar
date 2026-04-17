@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { formatCurrency } from '../lib/utils';
-import { TrendingUp, Users, Package, AlertTriangle, PlusCircle, ArrowRight } from 'lucide-react';
+import { TrendingUp, Users, Package, AlertTriangle, PlusCircle } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn } from '../lib/utils';
 
@@ -26,24 +26,21 @@ export default function Dashboard({ setActiveTab }: DashboardProps) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      // Fetch Omzet & Transactions
+      // 1. Ambil Data Transaksi Hari Ini
       const { data: transData, error: transError } = await supabase
         .from('transactions')
         .select('total_amount')
         .gte('created_at', today.toISOString());
 
-      if (transError) throw transError;
+      // Jika tabel belum ada, biarkan 0 agar tidak crash
+      const omzet = transData ? transData.reduce((acc, curr) => acc + Number(curr.total_amount), 0) : 0;
+      const transactions = transData ? transData.length : 0;
 
-      const omzet = transData.reduce((acc, curr) => acc + Number(curr.total_amount), 0);
-      const transactions = transData.length;
-
-      // Fetch Low Stock
+      // 2. Ambil Stok Menipis
       const { count, error: stockError } = await supabase
         .from('products')
         .select('*', { count: 'exact', head: true })
-        .lt('stock', 5); // Using 5 as default threshold
-
-      if (stockError) throw stockError;
+        .lt('stock', 5);
 
       setStats({
         omzet,
@@ -51,7 +48,7 @@ export default function Dashboard({ setActiveTab }: DashboardProps) {
         lowStock: count || 0,
       });
     } catch (err) {
-      console.error('Error fetching stats:', err);
+      console.warn('Gagal ambil statistik, kemungkinan tabel belum lengkap:', err);
     } finally {
       setLoading(false);
     }
@@ -116,28 +113,6 @@ export default function Dashboard({ setActiveTab }: DashboardProps) {
             </div>
           </motion.div>
         ))}
-      </div>
-
-      <div className="card-sleek p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-bold text-slate-900">Aksi Cepat</h3>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <button 
-            onClick={() => setActiveTab('inventory')}
-            className="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:bg-slate-100 transition-colors gap-2"
-          >
-            <Package className="text-primary" size={24} />
-            <span className="text-xs font-bold text-slate-600">Update Stok</span>
-          </button>
-          <button 
-            onClick={() => setActiveTab('reports')}
-            className="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:bg-slate-100 transition-colors gap-2"
-          >
-            <TrendingUp className="text-primary" size={24} />
-            <span className="text-xs font-bold text-slate-600">Lihat Laporan</span>
-          </button>
-        </div>
       </div>
     </div>
   );
