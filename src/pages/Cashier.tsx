@@ -31,7 +31,7 @@ export default function Cashier() {
     setLoading(true);
     try {
       const [prodRes, catRes] = await Promise.all([
-        supabase.from('products').select('*').order('name'),
+        supabase.from('products').select('*').eq('is_active', true).order('name'),
         supabase.from('categories').select('*').order('name')
       ]);
       if (prodRes.error) throw prodRes.error;
@@ -192,31 +192,31 @@ export default function Cashier() {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row h-full gap-6 overflow-hidden">
+    <div className="flex flex-col lg:flex-row gap-6 min-h-[calc(100vh-12rem)]">
       {/* Left Side: Product Selection */}
-      <div className="flex-1 flex flex-col gap-4 min-w-0">
-        <div className="flex flex-col gap-3">
-          <div className="relative">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-              <Search size={20} />
+      <div className="flex-1 flex flex-col gap-6">
+        <div className="space-y-4">
+          <div className="relative group">
+            <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
+              <Search size={22} />
             </div>
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari produk (Nama, Barcode)..."
-              className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl shadow-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+              className="w-full pl-14 pr-6 py-4 bg-white border border-slate-200 rounded-[20px] shadow-sm focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-sm font-medium"
             />
           </div>
 
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide py-1">
             <button
               onClick={() => setSelectedCategory('all')}
               className={cn(
-                "px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all border",
+                "px-5 py-2.5 rounded-[14px] text-xs font-bold whitespace-nowrap transition-all border-2",
                 selectedCategory === 'all' 
-                  ? "bg-primary text-white border-primary" 
-                  : "bg-white text-slate-500 border-slate-200"
+                  ? "bg-primary text-white border-primary shadow-lg shadow-primary/20" 
+                  : "bg-white text-slate-500 border-slate-100 hover:border-slate-200"
               )}
             >
               Semua
@@ -226,10 +226,10 @@ export default function Cashier() {
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
                 className={cn(
-                  "px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all border",
+                  "px-5 py-2.5 rounded-[14px] text-xs font-bold whitespace-nowrap transition-all border-2",
                   selectedCategory === cat.id 
-                    ? "bg-primary text-white border-primary" 
-                    : "bg-white text-slate-500 border-slate-200"
+                    ? "bg-primary text-white border-primary shadow-lg shadow-primary/20" 
+                    : "bg-white text-slate-500 border-slate-100 hover:border-slate-200"
                 )}
               >
                 {cat.name}
@@ -238,7 +238,7 @@ export default function Cashier() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto pr-2">
+        <div className="flex-1">
           {loading ? (
             <div className="h-full flex items-center justify-center">
               <Loader2 className="animate-spin text-primary" size={32} />
@@ -249,33 +249,33 @@ export default function Cashier() {
               <p className="mt-2">Produk tidak ditemukan</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
               {filteredProducts.map(p => (
                 <button
                   key={p.id}
                   onClick={() => addToCart(p)}
                   disabled={p.stock <= 0}
                   className={cn(
-                    "card-sleek p-3 text-left flex flex-col gap-2 hover:border-primary transition-all group relative",
+                    "card-sleek p-4 text-left flex flex-col gap-3 hover:border-primary transition-all group relative",
                     p.stock <= 0 && "opacity-50 grayscale cursor-not-allowed"
                   )}
                 >
-                  <div className="w-full aspect-square bg-slate-50 rounded-xl flex items-center justify-center text-slate-300 group-hover:text-primary transition-colors">
-                    <Package size={32} />
+                  <div className="w-full aspect-square bg-slate-50 rounded-[20px] flex items-center justify-center text-slate-300 group-hover:text-primary transition-colors">
+                    <Package size={40} />
                   </div>
-                  <div>
-                    <h4 className="font-bold text-slate-900 text-sm truncate leading-tight">{p.name}</h4>
-                    <p className="text-primary font-black text-sm mt-1">{formatCurrency(p.sell_price)}</p>
-                    <div className="flex items-center justify-between mt-1">
+                  <div className="space-y-1">
+                    <h4 className="font-bold text-slate-900 text-sm truncate leading-tight uppercase tracking-tight">{p.name}</h4>
+                    <p className="text-primary font-black text-base">{formatCurrency(p.sell_price)}</p>
+                    <div className="flex items-center justify-between">
                       <span className={cn(
-                        "text-[10px] font-bold uppercase",
-                        p.stock < p.threshold ? "text-rose-500" : "text-slate-400"
+                        "text-[10px] font-bold uppercase py-0.5 px-1.5 rounded-md",
+                        p.stock < p.threshold ? "bg-rose-50 text-rose-500" : "bg-slate-50 text-slate-400"
                       )}>Stok: {p.stock}</span>
                     </div>
                   </div>
                   {p.stock <= 0 && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-white/60 rounded-[24px]">
-                      <span className="bg-rose-500 text-white text-[10px] font-bold px-2 py-1 rounded-lg uppercase">Habis</span>
+                    <div className="absolute inset-0 flex items-center justify-center bg-white/60 rounded-[32px] backdrop-blur-[1px]">
+                      <span className="bg-rose-500 text-white text-[10px] font-bold px-3 py-1 rounded-lg uppercase shadow-lg shadow-rose-200">Habis</span>
                     </div>
                   )}
                 </button>
@@ -286,8 +286,8 @@ export default function Cashier() {
       </div>
 
       {/* Right Side: Cart */}
-      <div className="w-full lg:w-[400px] flex flex-col gap-4">
-        <div className="flex-1 flex flex-col bg-white rounded-[32px] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+      <div className="w-full lg:w-[420px] lg:sticky lg:top-24 h-fit">
+        <div className="flex flex-col bg-white rounded-[40px] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
           <div className="p-6 border-b border-slate-50 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <ShoppingCart className="text-primary" size={24} />

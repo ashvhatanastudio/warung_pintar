@@ -76,7 +76,7 @@ export default function Inventory() {
     setLoading(true);
     try {
       const [prodRes, catRes] = await Promise.all([
-        supabase.from('products').select('*').order('name'),
+        supabase.from('products').select('*').eq('is_active', true).order('name'),
         supabase.from('categories').select('*').order('name')
       ]);
 
@@ -171,17 +171,20 @@ export default function Inventory() {
     if (!productToDelete) return;
     setIsSaving(true);
     try {
-      const { error } = await supabase.from('products').delete().eq('id', productToDelete);
+      // Use "Soft Delete" by updating is_active to false
+      // This allows deletion even if product has existing transactions
+      const { error } = await supabase
+        .from('products')
+        .update({ is_active: false })
+        .eq('id', productToDelete);
+
       if (error) {
-        if (error.code === '23503') {
-          throw new Error('Produk tidak bisa dihapus karena sudah ada dalam riwayat transaksi. Anda bisa mengubah stoknya menjadi 0 atau mengubah namanya jika tidak ingin digunakan lagi.');
-        }
         if (error.message.includes('permission denied') || error.code === '42501') {
-          throw new Error('Anda tidak memiliki izin untuk menghapus produk. Pastikan kebijakan RLS di Supabase sudah diatur untuk mengizinkan DELETE.');
+          throw new Error('Anda tidak memiliki izin untuk menghapus produk. Pastikan kebijakan RLS di Supabase sudah diatur untuk mengizinkan UPDATE.');
         }
         throw error;
       }
-      toast.success('Produk berhasil dihapus');
+      toast.success('Produk berhasil dihapus dari daftar aktif');
       setIsDeleteModalOpen(false);
       setProductToDelete(null);
       fetchData();

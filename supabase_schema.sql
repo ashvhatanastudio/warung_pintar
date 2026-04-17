@@ -30,6 +30,7 @@ CREATE TABLE products (
   unit TEXT DEFAULT 'pcs',
   barcode TEXT UNIQUE,
   threshold INTEGER DEFAULT 5,
+  is_active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

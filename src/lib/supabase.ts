@@ -48,6 +48,7 @@ export type Product = {
   unit: string;
   barcode: string;
   threshold: number;
+  is_active?: boolean;
 };
 
 export type Category = {
