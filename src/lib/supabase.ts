@@ -5,8 +5,9 @@ let supabaseInstance: SupabaseClient | null = null;
 export const getSupabase = () => {
   if (supabaseInstance) return supabaseInstance;
 
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+  // Ganti baris 8 dan 9 menjadi seperti ini:
+const supabaseUrl = " https://ypgmeblktxfuajvnghct.supabase.co"; // URL Asli Anda
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlwZ21lYmxrdHhmdWFqdm5naGN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMjIyMDMsImV4cCI6MjA5MTc5ODIwM30._feGrr4hciBLS2uEIst_eqjHU_sgxBL_uXiOQNtrh7Y"; // KEY Asli Anda
 
   if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'https://your-project-url.supabase.co') {
     console.warn('Supabase credentials are not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
