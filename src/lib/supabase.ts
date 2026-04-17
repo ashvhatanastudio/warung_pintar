@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 
 // URL & KEY LANGSUNG DI SINI (HARDCODE)
 const supabaseUrl = "https://ypgmeblktxfuajvnghct.supabase.co"; 
-const supabaseAnonKey = "MASUKKAN_ANON_KEY_ANDA_DI_SINI"; 
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlwZ21lYmxrdHhmdWFqdm5naGN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyMjIyMDMsImV4cCI6MjA5MTc5ODIwM30._feGrr4hciBLS2uEIst_eqjHU_sgxBL_uXiOQNtrh7Y"; 
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
