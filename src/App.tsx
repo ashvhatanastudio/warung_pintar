@@ -11,9 +11,11 @@ import { LayoutDashboard, ShoppingCart, Package } from 'lucide-react';
 
 function AppContent() {
   const { user, profile, loading } = useAuth();
-  const [activeTab, setActiveTab] = useState('dashboard');
-
-  if (loading) {
+  
+  // LOGIKA BARU: Jika Login Berhasil (User ada), LANGSUNG masuk ke Dashboard
+  // Tidak peduli Profile sudah ketemu atau belum.
+  
+  if (loading && !user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-bg-app">
         <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
@@ -21,9 +23,12 @@ function AppContent() {
     );
   }
 
-  if (!user || !profile) {
+  if (!user) {
     return <Login />;
   }
+
+  // Jika masuk ke sini, berarti User SUDAH ke deteksi Login
+  // Sisanya tinggal render Dashboard...
 
   const renderContent = () => {
     switch (activeTab) {

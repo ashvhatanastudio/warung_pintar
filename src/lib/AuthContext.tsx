@@ -17,24 +17,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const client = supabase;
-    if (!client || !import.meta.env.VITE_SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL === 'https://your-project-url.supabase.co') {
-      setLoading(false);
-      return;
-    }
-
-    // Check active sessions
+    // 1. Cek Sesi Sekarang
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      if (session?.user) fetchProfile(session.user.id);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) fetchProfile(currentUser.id);
       else setLoading(false);
     });
 
-    // Listen for changes
+    // 2. Pantengin Perubahan (Login/Logout)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) fetchProfile(session.user.id);
-      else {
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) {
+        fetchProfile(currentUser.id);
+        setLoading(false); // PAKSA berhenti loading agar Dashboard muncul
+      } else {
         setProfile(null);
         setLoading(false);
       }
@@ -45,16 +43,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function fetchProfile(userId: string) {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-
-      if (error) throw error;
-      setProfile(data);
+      const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
+      if (data) setProfile(data);
     } catch (err) {
-      console.error('Error fetching profile:', err);
+      console.warn('Gagal ambil data profil, tapi user tetap boleh masuk.');
     } finally {
       setLoading(false);
     }
@@ -62,6 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    window.location.reload(); // Refresh total saat logout agar bersih
   };
 
   return (
@@ -73,8 +66,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (context === undefined) throw new Error('useAuth error');
   return context;
 }
